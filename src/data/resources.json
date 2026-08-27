@@ -1,0 +1,59 @@
+[
+  {
+    "id": "r1",
+    "nodeId": "n5",
+    "timestamp": "2026-08-27T10:06:00Z",
+    "imageUrl": "/data-images/1_chair.webp",
+    "detectedItems": [
+      { "type": "Wheelchair", "confidence": 98.5 },
+      { "type": "IV Pump", "confidence": 42.1 }
+    ]
+  },
+  {
+    "id": "r2",
+    "nodeId": "n12",
+    "timestamp": "2026-08-27T09:56:00Z",
+    "imageUrl": "/data-images/2_chair.jpg",
+    "detectedItems": [
+      { "type": "Wheelchair", "confidence": 95.0 }
+    ]
+  },
+  {
+    "id": "r3",
+    "nodeId": "n2",
+    "timestamp": "2026-08-27T09:46:00Z",
+    "imageUrl": "/data-images/3_chair.jpg",
+    "detectedItems": [
+      { "type": "Wheelchair", "confidence": 88.2 },
+      { "type": "Crash Cart", "confidence": 76.4 }
+    ]
+  },
+  {
+    "id": "r4",
+    "nodeId": "n9",
+    "timestamp": "2026-08-27T10:09:00Z",
+    "imageUrl": "/data-images/images (1).jpg",
+    "detectedItems": [
+      { "type": "IV Pump", "confidence": 99.1 }
+    ]
+  },
+  {
+    "id": "r5",
+    "nodeId": "n11",
+    "timestamp": "2026-08-27T10:01:00Z",
+    "imageUrl": "/data-images/images (2).jpg",
+    "detectedItems": [
+      { "type": "Crash Cart", "confidence": 92.8 },
+      { "type": "Defibrillator", "confidence": 89.5 }
+    ]
+  },
+  {
+    "id": "r6",
+    "nodeId": "n3",
+    "timestamp": "2026-08-27T10:10:00Z",
+    "imageUrl": "/data-images/images (3).jpg",
+    "detectedItems": [
+      { "type": "Stretcher", "confidence": 97.3 }
+    ]
+  }
+]

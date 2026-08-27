@@ -7,22 +7,30 @@ import {
 import express from 'express';
 import {join} from 'node:path';
 
+import fs from 'node:fs';
+
 const browserDistFolder = join(import.meta.dirname, '../browser');
+const dataFolder = join(process.cwd(), 'src/data');
+const imagesFolder = join(process.cwd(), 'src/data-images');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
+app.use('/data-images', express.static(imagesFolder));
+
 /**
  * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/{*splat}', (req, res) => {
- *   // Handle API request
- * });
- * ```
  */
+app.get('/api/resources', (req, res) => {
+  try {
+    const resourcesPath = join(dataFolder, 'resources.json');
+    const data = fs.readFileSync(resourcesPath, 'utf8');
+    res.json(JSON.parse(data));
+  } catch (err) {
+    console.error('Failed to read resources.json', err);
+    res.status(500).json({ error: 'Failed to load resources' });
+  }
+});
 
 /**
  * Serve static files from /browser

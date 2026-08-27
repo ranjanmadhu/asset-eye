@@ -31,15 +31,22 @@ export interface PathResult {
   distance: number;
 }
 
+export interface DetectedResource {
+  type: string;
+  confidence: number;
+}
+
 export interface ResourceData {
   id: string;
-  type: string;
   nodeId: string;
   timestamp: string;
+  imageUrl: string;
+  detectedItems: DetectedResource[];
 }
 
 export interface RouteOption {
   resource: ResourceData;
+  matchedItem: DetectedResource;
   nodeName: string;
   path: GraphNode[];
   directions: string[];

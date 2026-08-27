@@ -38,14 +38,6 @@ export const AREAS: FloorArea[] = [
   { id: 'a14', floor: 2, type: 'elevator', x: 680, y: 670, width: 60, height: 60, label: 'Elevator 1' },
 ];
 
-export const RESOURCES: ResourceData[] = [
-  { id: 'r1', type: 'Wheelchair', nodeId: 'n5', timestamp: new Date(Date.now() - 5 * 60000).toISOString() },
-  { id: 'r2', type: 'Wheelchair', nodeId: 'n12', timestamp: new Date(Date.now() - 15 * 60000).toISOString() },
-  { id: 'r3', type: 'Wheelchair', nodeId: 'n2', timestamp: new Date(Date.now() - 25 * 60000).toISOString() },
-  { id: 'r4', type: 'IV Pump', nodeId: 'n9', timestamp: new Date(Date.now() - 2 * 60000).toISOString() },
-  { id: 'r5', type: 'Crash Cart', nodeId: 'n11', timestamp: new Date(Date.now() - 10 * 60000).toISOString() },
-];
-
 export const EDGES: GraphEdge[] = [
   // Floor 1
   { source: 'n1', target: 'n2', distance: 20, direction: 'East' },
