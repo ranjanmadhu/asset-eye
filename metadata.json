@@ -1,0 +1,8 @@
+{
+  "name": "Hospital Indoor Navigator",
+  "description": "A multi-floor hospital indoor wayfinding application using Dijkstra's algorithm and native SVG rendering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
