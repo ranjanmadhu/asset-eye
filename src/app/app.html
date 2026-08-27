@@ -5,118 +5,224 @@
       <div class="w-8 h-8 bg-blue-500 rounded flex items-center justify-center font-bold">H</div>
       <h1 class="font-semibold text-lg tracking-tight">MediPath Indoor Navigation <span class="text-blue-400 font-normal text-sm ml-2">v21.0.4-POC</span></h1>
     </div>
+
+    <!-- View Toggles -->
+    <div class="hidden sm:flex bg-slate-800 rounded-lg p-1 border border-slate-700">
+      <button 
+        (click)="viewMode.set('map')"
+        class="px-4 py-1.5 rounded-md text-xs font-bold transition-colors cursor-pointer"
+        [class.bg-blue-600]="viewMode() === 'map'"
+        [class.text-white]="viewMode() === 'map'"
+        [class.text-slate-300]="viewMode() !== 'map'"
+      >WAYFINDING</button>
+      <button 
+        (click)="viewMode.set('database')"
+        class="px-4 py-1.5 rounded-md text-xs font-bold transition-colors cursor-pointer"
+        [class.bg-blue-600]="viewMode() === 'database'"
+        [class.text-white]="viewMode() === 'database'"
+        [class.text-slate-300]="viewMode() !== 'database'"
+      >DATABASE</button>
+    </div>
+
     <div class="flex items-center gap-4 text-xs font-medium uppercase tracking-wider hidden sm:flex">
       <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-green-500"></span> Systems Online</span>
-      <span class="opacity-50">|</span>
-      <span>System: Multi-Floor View</span>
     </div>
   </header>
 
   <!-- Main Layout -->
-  <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
-    
-    <!-- Sidebar Controls -->
-    <aside class="w-full md:w-[320px] bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto md:overflow-y-hidden">
-      <!-- Navigation Card -->
-      <div class="p-5 border-b border-slate-100">
-        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Routing Parameters</label>
-        
-        <div class="space-y-4">
-          <!-- Start Location -->
-          <div class="relative">
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">○</span>
-            <select 
-              [ngModel]="startNodeId()" 
-              (ngModelChange)="startNodeId.set($event)"
-              class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none"
-            >
-              <option value="" disabled selected>Start Location</option>
-              @for (group of floorGroups; track group) {
-                <optgroup [label]="group">
-                  @for (node of groupedNodes[group]; track node.id) {
-                    <option [value]="node.id">{{ node.name }}</option>
-                  }
-                </optgroup>
-              }
-            </select>
-          </div>
+  @if (viewMode() === 'map') {
+    <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
+      
+      <!-- Sidebar Controls -->
+      <aside class="w-full md:w-[320px] bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto md:overflow-y-hidden">
+        <!-- Navigation Card -->
+        <div class="p-5 border-b border-slate-100">
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Routing Parameters</label>
+          
+          <div class="space-y-4">
+            <!-- Start Location -->
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">○</span>
+              <select 
+                [ngModel]="startNodeId()" 
+                (ngModelChange)="startNodeId.set($event)"
+                class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none"
+              >
+                <option value="" disabled selected>Start Location</option>
+                @for (group of floorGroups; track group) {
+                  <optgroup [label]="group">
+                    @for (node of groupedNodes[group]; track node.id) {
+                      <option [value]="node.id">{{ node.name }}</option>
+                    }
+                  </optgroup>
+                }
+              </select>
+            </div>
 
-          <!-- Destination -->
-          <div class="relative">
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500 font-bold text-xs">●</span>
-            <select 
-              [ngModel]="endNodeId()" 
-              (ngModelChange)="endNodeId.set($event)"
-              class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none"
-            >
-              <option value="" disabled selected>Destination</option>
-              @for (group of floorGroups; track group) {
-                <optgroup [label]="group">
-                  @for (node of groupedNodes[group]; track node.id) {
-                    <option [value]="node.id">{{ node.name }}</option>
-                  }
-                </optgroup>
-              }
-            </select>
-          </div>
+            <!-- Looking For (Resource) -->
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500 font-bold text-xs">●</span>
+              <select 
+                [ngModel]="selectedResourceType()" 
+                (ngModelChange)="selectedResourceType.set($event)"
+                class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none"
+              >
+                <option value="" disabled selected>Looking For...</option>
+                @for (type of resourceTypes; track type) {
+                  <option [value]="type">{{ type }}</option>
+                }
+              </select>
+            </div>
 
-          <!-- Action Button -->
-          <button 
-            (click)="calculatePath()"
-            [disabled]="!startNodeId() || !endNodeId()"
-            class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded text-sm transition-colors shadow-sm cursor-pointer"
-          >
-            Get Shortest Path
+            <!-- Action Button -->
+            <button 
+              (click)="findResources()"
+              [disabled]="!startNodeId() || !selectedResourceType()"
+              class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded text-sm transition-colors shadow-sm cursor-pointer"
+            >
+              Find Resource
+            </button>
+          </div>
+        </div>
+
+        <!-- Resource Options -->
+        @if (routeOptions().length > 0) {
+          <div class="p-5 border-b border-slate-100 bg-slate-50/50">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Available Options</label>
+            <div class="space-y-3">
+              @for (opt of routeOptions(); track opt.resource.id; let i = $index) {
+                <div 
+                  class="p-3 rounded border transition-all cursor-pointer shadow-sm relative overflow-hidden"
+                  [class.bg-white]="i !== selectedOptionIdx()"
+                  [class.border-slate-200]="i !== selectedOptionIdx()"
+                  [class.bg-blue-50]="i === selectedOptionIdx()"
+                  [class.border-blue-500]="i === selectedOptionIdx()"
+                  (click)="selectedOptionIdx.set(i)"
+                >
+                  @if (i === selectedOptionIdx()) {
+                    <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                  }
+                  <div class="flex justify-between items-start mb-1">
+                    <span class="font-semibold text-sm text-slate-800 flex items-center gap-1.5">
+                      <mat-icon class="!w-4 !h-4 text-[16px] text-slate-400">place</mat-icon>
+                      {{ opt.nodeName }}
+                    </span>
+                    <span class="text-xs font-bold text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded">{{ opt.distance }}m</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-2 font-medium">
+                    <mat-icon class="!w-3.5 !h-3.5 text-[14px]">schedule</mat-icon>
+                    Seen: {{ opt.timeAgo }}
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Directions Panel -->
+        @if (directions().length > 0) {
+          <div class="flex-1 overflow-hidden flex flex-col p-5 bg-slate-50">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Turn-by-Turn Directions</label>
+            
+            <div class="space-y-3 overflow-y-auto pr-1 pb-4">
+              @for (step of directions(); track $index; let last = $last) {
+                <div 
+                  class="flex gap-3 p-3 rounded border-l-4 shadow-sm"
+                  [class.bg-white]="!last" 
+                  [class.border-blue-500]="!last"
+                  [class.bg-slate-100]="last"
+                  [class.border-slate-300]="last"
+                  [class.opacity-60]="last"
+                >
+                  <div class="text-xs font-mono text-slate-400 mt-0.5">
+                    {{ ($index + 1) < 10 ? '0' + ($index + 1) : ($index + 1) }}
+                  </div>
+                  <div class="text-sm">
+                    <p class="font-medium">{{ step }}</p>
+                    <p class="text-slate-500 text-xs mt-0.5">
+                      @if (last) {
+                        Destination reached
+                      } @else if (step.includes('Floor')) {
+                        Floor transition
+                      } @else {
+                        Follow the path
+                      }
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </aside>
+
+      <!-- Map Visualization Section -->
+      <section class="flex-1 relative flex flex-col bg-white">
+        <!-- Map UI Component -->
+        <app-map
+          class="flex-1 flex flex-col h-full w-full"
+          [nodes]="nodes"
+          [edges]="edges"
+          [activePath]="activePath()"
+        ></app-map>
+      </section>
+    </main>
+  } @else {
+    <main class="flex-1 overflow-y-auto p-6 md:p-10 bg-slate-100">
+      <div class="max-w-5xl mx-auto">
+        <div class="mb-6 flex justify-between items-end">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Resource Database</h2>
+            <p class="text-sm text-slate-500 mt-1">Live telemetry of tracked hospital assets</p>
+          </div>
+          <button class="bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 shadow-sm flex items-center gap-2 cursor-pointer transition-colors">
+            <mat-icon class="!w-4 !h-4 text-[16px]">refresh</mat-icon> Refresh Data
           </button>
         </div>
-      </div>
-
-      <!-- Directions Panel -->
-      @if (directions().length > 0) {
-        <div class="flex-1 overflow-hidden flex flex-col p-5 bg-slate-50">
-          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Turn-by-Turn Directions</label>
-          
-          <div class="space-y-3 overflow-y-auto pr-1 pb-4">
-            @for (step of directions(); track $index; let last = $last) {
-              <div 
-                class="flex gap-3 p-3 rounded border-l-4 shadow-sm"
-                [class.bg-white]="!last" 
-                [class.border-blue-500]="!last"
-                [class.bg-slate-100]="last"
-                [class.border-slate-300]="last"
-                [class.opacity-60]="last"
-              >
-                <div class="text-xs font-mono text-slate-400 mt-0.5">
-                  {{ ($index + 1) < 10 ? '0' + ($index + 1) : ($index + 1) }}
-                </div>
-                <div class="text-sm">
-                  <p class="font-medium">{{ step }}</p>
-                  <p class="text-slate-500 text-xs mt-0.5">
-                    @if (last) {
-                      Destination reached
-                    } @else if (step.includes('Floor')) {
-                      Floor transition
-                    } @else {
-                      Follow the path
-                    }
-                  </p>
-                </div>
-              </div>
-            }
-          </div>
+        
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-[10px] uppercase tracking-widest text-slate-500">
+                <th class="px-6 py-4 font-bold">Asset ID</th>
+                <th class="px-6 py-4 font-bold">Type</th>
+                <th class="px-6 py-4 font-bold">Last Known Location</th>
+                <th class="px-6 py-4 font-bold">Time Logged</th>
+                <th class="px-6 py-4 font-bold">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm">
+              @for (res of databaseResources(); track res.id) {
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="px-6 py-4 font-mono text-xs text-slate-500 font-semibold">{{ res.id }}</td>
+                  <td class="px-6 py-4 font-semibold text-slate-800">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100 text-xs">
+                      {{ res.type }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-slate-600">
+                    <div class="flex items-center gap-2">
+                      <mat-icon class="!w-4 !h-4 text-[16px] text-slate-400">place</mat-icon>
+                      <span class="font-medium">{{ res.nodeName }}</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-slate-600">
+                    <div class="flex flex-col">
+                      <span class="font-medium">{{ res.timeAgo }}</span>
+                      <span class="text-xs text-slate-400">{{ res.dateFormatted }}</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded border border-emerald-100">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]"></span> Active
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
-      }
-    </aside>
-
-    <!-- Map Visualization Section -->
-    <section class="flex-1 relative flex flex-col bg-white">
-      <!-- Map UI Component -->
-      <app-map
-        class="flex-1 flex flex-col h-full w-full"
-        [nodes]="nodes"
-        [edges]="edges"
-        [activePath]="activePath()"
-      ></app-map>
-    </section>
-  </main>
+      </div>
+    </main>
+  }
 </div>

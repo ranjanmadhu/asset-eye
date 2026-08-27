@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { GraphEdge, GraphNode, PathResult } from './models';
-import { EDGES, NODES } from './mock-graph.data';
+import { GraphEdge, GraphNode, PathResult, RouteOption } from './models';
+import { EDGES, NODES, RESOURCES } from './mock-graph.data';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class PathfindingService {
 
   getShortestPath(startId: string, endId: string): PathResult {
     if (!startId || !endId) {
-      return { path: [], directions: [] };
+      return { path: [], directions: [], distance: 0 };
     }
 
     const distances = new Map<string, number>();
@@ -78,13 +78,43 @@ export class PathfindingService {
     }
 
     if (pathIds.length === 0 || pathIds[0] !== startId) {
-      return { path: [], directions: ['No valid route found.'] };
+      return { path: [], directions: ['No valid route found.'], distance: 0 };
     }
 
     const pathNodes = pathIds.map(id => NODES.find(n => n.id === id)!);
     const directions = this.generateDirections(pathIds);
+    const distance = distances.get(endId) || 0;
 
-    return { path: pathNodes, directions };
+    return { path: pathNodes, directions, distance };
+  }
+
+  findResources(startId: string, resourceType: string): RouteOption[] {
+    const matches = RESOURCES.filter(r => r.type === resourceType);
+    const options: RouteOption[] = [];
+    const now = Date.now();
+
+    for (const res of matches) {
+      const targetNode = NODES.find(n => n.id === res.nodeId);
+      if (!targetNode) continue;
+
+      const result = this.getShortestPath(startId, res.nodeId);
+      if (result.path.length > 0) {
+        const timeDiffMs = now - new Date(res.timestamp).getTime();
+        const mins = Math.floor(timeDiffMs / 60000);
+        
+        options.push({
+          resource: res,
+          nodeName: targetNode.name,
+          path: result.path,
+          directions: result.directions,
+          distance: result.distance,
+          timeAgo: mins <= 0 ? 'Just now' : `${mins} min${mins > 1 ? 's' : ''} ago`
+        });
+      }
+    }
+
+    options.sort((a, b) => a.distance - b.distance);
+    return options;
   }
 
   private generateDirections(pathIds: string[]): string[] {

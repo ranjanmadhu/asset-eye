@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@a
 import { FormsModule } from '@angular/forms';
 import { PathfindingService } from './pathfinding.service';
 import { MapComponent } from './map/map.component';
-import { GraphNode } from './models';
+import { GraphNode, RouteOption } from './models';
+import { RESOURCES } from './mock-graph.data';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -14,6 +15,8 @@ import { MatIconModule } from '@angular/material/icon';
 export class App {
   private pathfinding = inject(PathfindingService);
   
+  viewMode = signal<'map' | 'database'>('map');
+
   nodes = this.pathfinding.getNodes();
   edges = this.pathfinding.getEdges();
   
@@ -27,16 +30,37 @@ export class App {
   floorGroups = Object.keys(this.groupedNodes).sort();
 
   startNodeId = signal<string>('');
-  endNodeId = signal<string>('');
   
-  activePath = signal<GraphNode[]>([]);
-  directions = signal<string[]>([]);
+  resourceTypes = Array.from(new Set(RESOURCES.map(r => r.type))).sort();
+  selectedResourceType = signal<string>('');
+  
+  databaseResources = computed(() => {
+    const now = Date.now();
+    return RESOURCES.map(res => {
+      const targetNode = this.nodes.find(n => n.id === res.nodeId);
+      const timeDiffMs = now - new Date(res.timestamp).getTime();
+      const mins = Math.floor(timeDiffMs / 60000);
+      return {
+        ...res,
+        nodeName: targetNode?.name || 'Unknown',
+        timeAgo: mins <= 0 ? 'Just now' : `${mins} min${mins > 1 ? 's' : 's'} ago`,
+        dateFormatted: new Date(res.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+      };
+    }).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  });
 
-  calculatePath() {
-    if (!this.startNodeId() || !this.endNodeId()) return;
+  routeOptions = signal<RouteOption[]>([]);
+  selectedOptionIdx = signal<number>(-1);
+
+  activeOption = computed(() => this.routeOptions()[this.selectedOptionIdx()]);
+  activePath = computed(() => this.activeOption()?.path || []);
+  directions = computed(() => this.activeOption()?.directions || []);
+
+  findResources() {
+    if (!this.startNodeId() || !this.selectedResourceType()) return;
     
-    const result = this.pathfinding.getShortestPath(this.startNodeId(), this.endNodeId());
-    this.activePath.set(result.path);
-    this.directions.set(result.directions);
+    const opts = this.pathfinding.findResources(this.startNodeId(), this.selectedResourceType());
+    this.routeOptions.set(opts);
+    this.selectedOptionIdx.set(opts.length > 0 ? 0 : -1);
   }
 }

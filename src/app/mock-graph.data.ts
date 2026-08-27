@@ -1,4 +1,4 @@
-import { FloorArea, GraphEdge, GraphNode } from './models';
+import { FloorArea, GraphEdge, GraphNode, ResourceData } from './models';
 
 export const NODES: GraphNode[] = [
   // Floor 1
@@ -36,6 +36,14 @@ export const AREAS: FloorArea[] = [
   { id: 'a12', floor: 2, type: 'corridor', x: 570, y: 570, width: 60, height: 100 },
   { id: 'a13', floor: 2, type: 'room', x: 500, y: 370, width: 200, height: 200, label: 'ICU' },
   { id: 'a14', floor: 2, type: 'elevator', x: 680, y: 670, width: 60, height: 60, label: 'Elevator 1' },
+];
+
+export const RESOURCES: ResourceData[] = [
+  { id: 'r1', type: 'Wheelchair', nodeId: 'n5', timestamp: new Date(Date.now() - 5 * 60000).toISOString() },
+  { id: 'r2', type: 'Wheelchair', nodeId: 'n12', timestamp: new Date(Date.now() - 15 * 60000).toISOString() },
+  { id: 'r3', type: 'Wheelchair', nodeId: 'n2', timestamp: new Date(Date.now() - 25 * 60000).toISOString() },
+  { id: 'r4', type: 'IV Pump', nodeId: 'n9', timestamp: new Date(Date.now() - 2 * 60000).toISOString() },
+  { id: 'r5', type: 'Crash Cart', nodeId: 'n11', timestamp: new Date(Date.now() - 10 * 60000).toISOString() },
 ];
 
 export const EDGES: GraphEdge[] = [

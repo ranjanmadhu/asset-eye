@@ -28,4 +28,21 @@ export interface GraphEdge {
 export interface PathResult {
   path: GraphNode[];
   directions: string[];
+  distance: number;
+}
+
+export interface ResourceData {
+  id: string;
+  type: string;
+  nodeId: string;
+  timestamp: string;
+}
+
+export interface RouteOption {
+  resource: ResourceData;
+  nodeName: string;
+  path: GraphNode[];
+  directions: string[];
+  distance: number;
+  timeAgo: string;
 }
