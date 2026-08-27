@@ -2,8 +2,10 @@
   <!-- Header -->
   <header class="h-14 bg-slate-900 text-white flex items-center justify-between px-6 shrink-0 shadow-lg">
     <div class="flex items-center gap-3">
-      <div class="w-8 h-8 bg-blue-500 rounded flex items-center justify-center font-bold">H</div>
-      <h1 class="font-semibold text-lg tracking-tight">MediPath Indoor Navigation <span class="text-blue-400 font-normal text-sm ml-2">v21.0.4-POC</span></h1>
+      <div class="w-10 h-10 rounded overflow-hidden flex items-center justify-center bg-white shadow-sm shrink-0">
+        <img src="/logo.jpg" alt="Asset Eye Logo" class="w-[140%] h-[140%] max-w-none object-cover object-[center_35%]" />
+      </div>
+      <h1 class="font-semibold text-lg tracking-tight">Asset Eye</h1>
     </div>
 
     <!-- View Toggles -->
@@ -75,7 +77,7 @@
                 class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none"
               >
                 <option value="" disabled selected>Looking For...</option>
-                @for (type of resourceTypes; track type) {
+                @for (type of resourceTypes(); track type) {
                   <option [value]="type">{{ type }}</option>
                 }
               </select>
@@ -119,6 +121,10 @@
                   <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-2 font-medium">
                     <mat-icon class="!w-3.5 !h-3.5 text-[14px]">schedule</mat-icon>
                     Seen: {{ opt.timeAgo }}
+                  </div>
+                  <div class="mt-2 text-[10px] font-semibold flex justify-between items-center text-slate-500 border-t border-slate-100 pt-2">
+                    <span>{{ opt.matchedItem.type }}</span>
+                    <span class="text-emerald-600">{{ opt.matchedItem.confidence }}% Confidence</span>
                   </div>
                 </div>
               }
@@ -186,7 +192,7 @@
             <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Resource Database</h2>
             <p class="text-sm text-slate-500 mt-1">Live telemetry of tracked hospital assets</p>
           </div>
-          <button class="bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 shadow-sm flex items-center gap-2 cursor-pointer transition-colors">
+          <button (click)="refreshData()" class="bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 shadow-sm flex items-center gap-2 cursor-pointer transition-colors">
             <mat-icon class="!w-4 !h-4 text-[16px]">refresh</mat-icon> Refresh Data
           </button>
         </div>
@@ -196,7 +202,8 @@
             <thead>
               <tr class="bg-slate-50 border-b border-slate-200 text-[10px] uppercase tracking-widest text-slate-500">
                 <th class="px-6 py-4 font-bold">Asset ID</th>
-                <th class="px-6 py-4 font-bold">Type</th>
+                <th class="px-6 py-4 font-bold">Image</th>
+                <th class="px-6 py-4 font-bold">Detected Items</th>
                 <th class="px-6 py-4 font-bold">Last Known Location</th>
                 <th class="px-6 py-4 font-bold">Time Logged</th>
                 <th class="px-6 py-4 font-bold">Status</th>
@@ -206,10 +213,17 @@
               @for (res of databaseResources(); track res.id) {
                 <tr class="hover:bg-slate-50 transition-colors">
                   <td class="px-6 py-4 font-mono text-xs text-slate-500 font-semibold">{{ res.id }}</td>
+                  <td class="px-6 py-4">
+                    <img [src]="res.imageUrl" referrerpolicy="no-referrer" alt="Detection" class="w-12 h-12 object-cover rounded shadow-sm border border-slate-200">
+                  </td>
                   <td class="px-6 py-4 font-semibold text-slate-800">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100 text-xs">
-                      {{ res.type }}
-                    </span>
+                    <div class="flex flex-wrap gap-2">
+                      @for (item of res.detectedItems; track item.type) {
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100 text-[10px] uppercase tracking-wider">
+                          {{ item.type }} <span class="text-blue-400 font-normal">({{ item.confidence }}%)</span>
+                        </span>
+                      }
+                    </div>
                   </td>
                   <td class="px-6 py-4 text-slate-600">
                     <div class="flex items-center gap-2">

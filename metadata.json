@@ -1,6 +1,6 @@
 {
-  "name": "Hospital Indoor Navigator",
-  "description": "A multi-floor hospital indoor wayfinding application using Dijkstra's algorithm and native SVG rendering.",
+  "name": "Asset Eye",
+  "description": "Hospital resource tracking and wayfinding application utilizing live telemetry and image analysis.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

@@ -8,10 +8,13 @@ import express from 'express';
 import {mkdir, writeFile} from 'node:fs/promises';
 import {join, resolve} from 'node:path';
 
+import fs from 'node:fs';
+
 const browserDistFolder = join(import.meta.dirname, '../browser');
+const dataFolder = join(process.cwd(), 'src/data');
 
 /** Source folder that holds the tracked asset imagery. */
-const dataImagesFolder = resolve(
+const imagesFolder = resolve(
   process.env['DATA_IMAGES_DIR'] ?? join(process.cwd(), 'src', 'data-images'),
 );
 
@@ -27,6 +30,18 @@ const app = express();
 const angularApp = new AngularNodeAppEngine();
 
 app.use('/api', express.json({limit: '15mb'}));
+app.use('/data-images', express.static(imagesFolder));
+
+app.get('/api/resources', (req, res) => {
+  try {
+    const resourcesPath = join(dataFolder, 'resources.json');
+    const data = fs.readFileSync(resourcesPath, 'utf8');
+    res.json(JSON.parse(data));
+  } catch (err) {
+    console.error('Failed to read resources.json', err);
+    res.status(500).json({error: 'Failed to load resources'});
+  }
+});
 
 app.post('/api/feed-upload', async (req, res) => {
   const {fileName, mimeType, data} = req.body ?? {};
@@ -52,8 +67,8 @@ app.post('/api/feed-upload', async (req, res) => {
   const storedName = `${Date.now()}_${slug}.${ALLOWED_IMAGE_TYPES[mimeType]}`;
 
   try {
-    await mkdir(dataImagesFolder, {recursive: true});
-    await writeFile(join(dataImagesFolder, storedName), buffer);
+    await mkdir(imagesFolder, {recursive: true});
+    await writeFile(join(imagesFolder, storedName), buffer);
     res.status(201).json({storedName, size: buffer.length});
   } catch {
     res.status(500).json({error: 'Failed to store the image.'});

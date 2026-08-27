@@ -1,11 +1,14 @@
-import { Injectable } from '@angular/core';
-import { GraphEdge, GraphNode, PathResult, RouteOption } from './models';
-import { EDGES, NODES, RESOURCES } from './mock-graph.data';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { GraphEdge, GraphNode, PathResult, RouteOption, ResourceData } from './models';
+import { EDGES, NODES } from './mock-graph.data';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PathfindingService {
+  private http = inject(HttpClient);
   
   getNodes(): GraphNode[] {
     return NODES;
@@ -88,14 +91,21 @@ export class PathfindingService {
     return { path: pathNodes, directions, distance };
   }
 
-  findResources(startId: string, resourceType: string): RouteOption[] {
-    const matches = RESOURCES.filter(r => r.type === resourceType);
+  async loadResources(): Promise<ResourceData[]> {
+    return await firstValueFrom(this.http.get<ResourceData[]>('/api/resources'));
+  }
+
+  findResourcesSync(startId: string, resourceType: string, resources: ResourceData[]): RouteOption[] {
+    const matches = resources.filter(r => r.detectedItems.some(item => item.type === resourceType));
     const options: RouteOption[] = [];
     const now = Date.now();
 
     for (const res of matches) {
       const targetNode = NODES.find(n => n.id === res.nodeId);
       if (!targetNode) continue;
+
+      const matchedItem = res.detectedItems.find(item => item.type === resourceType);
+      if (!matchedItem) continue;
 
       const result = this.getShortestPath(startId, res.nodeId);
       if (result.path.length > 0) {
@@ -104,6 +114,7 @@ export class PathfindingService {
         
         options.push({
           resource: res,
+          matchedItem: matchedItem,
           nodeName: targetNode.name,
           path: result.path,
           directions: result.directions,
