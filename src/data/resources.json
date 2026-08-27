@@ -5,8 +5,14 @@
     "timestamp": "2026-08-27T10:06:00Z",
     "imageUrl": "/data-images/1_chair.webp",
     "detectedItems": [
-      { "type": "Wheelchair", "confidence": 98.5 },
-      { "type": "IV Pump", "confidence": 42.1 }
+      {
+        "type": "Wheelchair",
+        "confidence": 98.5
+      },
+      {
+        "type": "IV Pump",
+        "confidence": 42.1
+      }
     ]
   },
   {
@@ -15,7 +21,10 @@
     "timestamp": "2026-08-27T09:56:00Z",
     "imageUrl": "/data-images/2_chair.jpg",
     "detectedItems": [
-      { "type": "Wheelchair", "confidence": 95.0 }
+      {
+        "type": "Wheelchair",
+        "confidence": 95
+      }
     ]
   },
   {
@@ -24,8 +33,14 @@
     "timestamp": "2026-08-27T09:46:00Z",
     "imageUrl": "/data-images/3_chair.jpg",
     "detectedItems": [
-      { "type": "Wheelchair", "confidence": 88.2 },
-      { "type": "Crash Cart", "confidence": 76.4 }
+      {
+        "type": "Wheelchair",
+        "confidence": 88.2
+      },
+      {
+        "type": "Crash Cart",
+        "confidence": 76.4
+      }
     ]
   },
   {
@@ -34,7 +49,10 @@
     "timestamp": "2026-08-27T10:09:00Z",
     "imageUrl": "/data-images/images (1).jpg",
     "detectedItems": [
-      { "type": "IV Pump", "confidence": 99.1 }
+      {
+        "type": "IV Pump",
+        "confidence": 99.1
+      }
     ]
   },
   {
@@ -43,8 +61,14 @@
     "timestamp": "2026-08-27T10:01:00Z",
     "imageUrl": "/data-images/images (2).jpg",
     "detectedItems": [
-      { "type": "Crash Cart", "confidence": 92.8 },
-      { "type": "Defibrillator", "confidence": 89.5 }
+      {
+        "type": "Crash Cart",
+        "confidence": 92.8
+      },
+      {
+        "type": "Defibrillator",
+        "confidence": 89.5
+      }
     ]
   },
   {
@@ -53,7 +77,22 @@
     "timestamp": "2026-08-27T10:10:00Z",
     "imageUrl": "/data-images/images (3).jpg",
     "detectedItems": [
-      { "type": "Stretcher", "confidence": 97.3 }
+      {
+        "type": "Stretcher",
+        "confidence": 97.3
+      }
+    ]
+  },
+  {
+    "id": "1787829786121_Screenshot_2026-08-27_150731",
+    "nodeId": "n1",
+    "timestamp": "2026-08-27T11:23:06.414Z",
+    "imageUrl": "/data-tagged/1787829786121_Screenshot_2026-08-27_150731_tagged.jpg",
+    "detectedItems": [
+      {
+        "type": "Wheelchair",
+        "confidence": 72
+      }
     ]
   }
 ]

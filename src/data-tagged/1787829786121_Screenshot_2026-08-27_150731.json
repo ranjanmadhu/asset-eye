@@ -1,0 +1,26 @@
+{
+  "id": "1787829786121_Screenshot_2026-08-27_150731",
+  "sourceImage": "1787829786121_Screenshot_2026-08-27_150731.png",
+  "sourceImageUrl": "/data-images/1787829786121_Screenshot_2026-08-27_150731.png",
+  "taggedImage": "1787829786121_Screenshot_2026-08-27_150731_tagged.jpg",
+  "taggedImageUrl": "/data-tagged/1787829786121_Screenshot_2026-08-27_150731_tagged.jpg",
+  "nodeId": "n1",
+  "capturedAt": "2026-08-27T11:23:06.414Z",
+  "processedAt": "2026-08-27T11:23:06.414Z",
+  "modelVersion": "yolov8n",
+  "imageWidth": 422,
+  "imageHeight": 598,
+  "detections": [
+    {
+      "rawLabel": "chair",
+      "type": "Wheelchair",
+      "confidence": 72,
+      "box": {
+        "x": 42,
+        "y": 26,
+        "width": 309,
+        "height": 552
+      }
+    }
+  ]
+}

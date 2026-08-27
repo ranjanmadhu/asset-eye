@@ -34,7 +34,11 @@
             "outputMode": "server",
             "ssr": {
               "entry": "src/server.ts"
-            }
+            },
+            "externalDependencies": [
+              "onnxruntime-node",
+              "sharp"
+            ]
           },
           "configurations": {
             "production": {

@@ -44,6 +44,43 @@ export interface ResourceData {
   detectedItems: DetectedResource[];
 }
 
+export interface DetectionBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface DetectionRecord {
+  rawLabel: string;
+  type: string;
+  confidence: number;
+  box: DetectionBox;
+}
+
+export interface DetectionMetadata {
+  id: string;
+  sourceImage: string;
+  sourceImageUrl: string;
+  taggedImage: string;
+  taggedImageUrl: string;
+  nodeId: string;
+  capturedAt: string;
+  processedAt: string;
+  modelVersion: string;
+  imageWidth: number;
+  imageHeight: number;
+  detections: DetectionRecord[];
+}
+
+export interface FeedUploadResponse {
+  storedName: string;
+  size: number;
+  nodeId: string;
+  record?: DetectionMetadata;
+  detectionError?: string;
+}
+
 export interface RouteOption {
   resource: ResourceData;
   matchedItem: DetectedResource;

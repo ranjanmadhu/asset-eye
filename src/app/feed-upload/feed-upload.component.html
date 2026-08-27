@@ -1,10 +1,29 @@
 <div class="max-w-3xl mx-auto">
   <div class="mb-6">
     <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Feed Upload</h2>
-    <p class="text-sm text-slate-500 mt-1">Submit a camera frame to the asset imagery library</p>
+    <p class="text-sm text-slate-500 mt-1">Submit a camera frame for object detection and tagging</p>
   </div>
 
   <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
+    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Capture Location</label>
+    <div class="relative mb-6">
+      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500 font-bold text-xs">●</span>
+      <select
+        [ngModel]="nodeId()"
+        (ngModelChange)="nodeId.set($event)"
+        class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none"
+      >
+        <option value="" disabled selected>Where was this frame captured?</option>
+        @for (group of floorGroups; track group) {
+          <optgroup [label]="group">
+            @for (node of groupedNodes[group]; track node.id) {
+              <option [value]="node.id">{{ node.name }}</option>
+            }
+          </optgroup>
+        }
+      </select>
+    </div>
+
     <label
       class="flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-lg p-10 cursor-pointer transition-colors"
       [class.border-blue-500]="dragging()"
@@ -44,18 +63,60 @@
       <p class="mt-4 text-sm font-medium text-red-600 bg-red-50 border border-red-100 rounded px-3 py-2">{{ err }}</p>
     }
 
-    @if (storedName(); as name) {
-      <p class="mt-4 text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded px-3 py-2">
-        Stored as <span class="font-mono">{{ name }}</span> in src/data-images
+    @if (detectionError(); as err) {
+      <p class="mt-4 text-sm font-medium text-amber-700 bg-amber-50 border border-amber-100 rounded px-3 py-2">
+        Image stored, but detection failed: {{ err }}
       </p>
     }
 
     <button
       (click)="upload()"
-      [disabled]="!file() || uploading()"
+      [disabled]="!file() || !nodeId() || uploading()"
       class="mt-6 w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded text-sm transition-colors shadow-sm cursor-pointer"
     >
-      {{ uploading() ? 'Uploading...' : 'Upload Frame' }}
+      {{ uploading() ? 'Analysing frame...' : 'Upload &amp; Detect' }}
     </button>
   </div>
+
+  @if (record(); as result) {
+    <div class="mt-6 bg-white border border-slate-200 rounded-xl shadow-sm p-6">
+      <div class="flex justify-between items-end mb-4">
+        <h3 class="font-bold text-slate-800">Detection Result</h3>
+        <span class="text-xs font-mono text-slate-400">{{ result.modelVersion }}</span>
+      </div>
+
+      <img
+        [src]="result.taggedImageUrl"
+        alt="Tagged detection output"
+        class="w-full rounded-lg border border-slate-200"
+      />
+
+      @if (result.detections.length > 0) {
+        <table class="w-full text-left border-collapse mt-5">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-[10px] uppercase tracking-widest text-slate-500">
+              <th class="px-4 py-3 font-bold">Asset Type</th>
+              <th class="px-4 py-3 font-bold">Model Label</th>
+              <th class="px-4 py-3 font-bold">Confidence</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-sm">
+            @for (det of result.detections; track $index) {
+              <tr>
+                <td class="px-4 py-3 font-semibold text-slate-800">{{ det.type }}</td>
+                <td class="px-4 py-3 font-mono text-xs text-slate-500">{{ det.rawLabel }}</td>
+                <td class="px-4 py-3">
+                  <span class="text-xs font-bold text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded">{{ det.confidence }}%</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="mt-5 text-sm text-slate-500 bg-slate-50 border border-slate-200 rounded px-3 py-2">
+          No known assets were detected in this frame.
+        </p>
+      }
+    </div>
+  }
 </div>

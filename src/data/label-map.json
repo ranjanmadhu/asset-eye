@@ -1,0 +1,22 @@
+{
+  "modelVersion": "yolov8n",
+  "minConfidence": 0.35,
+  "dropUnmapped": true,
+  "aliases": {
+    "chair": "Wheelchair",
+    "couch": "Wheelchair",
+    "bed": "Stretcher",
+    "person": "Person",
+    "suitcase": "Crash Cart",
+    "backpack": "Crash Cart",
+    "tv": "Defibrillator",
+    "laptop": "IV Pump",
+    "microwave": "IV Pump",
+    "refrigerator": "Supply Cabinet",
+    "sink": "Wash Station",
+    "toilet": "Wash Station",
+    "clock": "Wall Clock",
+    "bench": "Waiting Bench",
+    "dining table": "Procedure Table"
+  }
+}

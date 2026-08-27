@@ -1,12 +1,11 @@
 import {DecimalPipe} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, output, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 
-interface UploadResponse {
-  storedName: string;
-  size: number;
-}
+import {DetectionMetadata, FeedUploadResponse, GraphNode} from '../models';
+import {PathfindingService} from '../pathfinding.service';
 
 const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
 const MAX_BYTES = 10 * 1024 * 1024;
@@ -14,17 +13,31 @@ const MAX_BYTES = 10 * 1024 * 1024;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-feed-upload',
-  imports: [MatIconModule, DecimalPipe],
+  imports: [MatIconModule, DecimalPipe, FormsModule],
   templateUrl: './feed-upload.component.html',
 })
 export class FeedUploadComponent {
   private http = inject(HttpClient);
+  private pathfinding = inject(PathfindingService);
 
+  processed = output<void>();
+
+  nodes = this.pathfinding.getNodes();
+  groupedNodes = this.nodes.reduce((acc, node) => {
+    const group = `Floor ${node.floor}`;
+    (acc[group] ??= []).push(node);
+    return acc;
+  }, {} as Record<string, GraphNode[]>);
+  floorGroups = Object.keys(this.groupedNodes).sort();
+
+  nodeId = signal<string>('');
   file = signal<File | null>(null);
   previewUrl = signal<string | null>(null);
   uploading = signal(false);
   error = signal<string | null>(null);
   storedName = signal<string | null>(null);
+  record = signal<DetectionMetadata | null>(null);
+  detectionError = signal<string | null>(null);
   dragging = signal(false);
 
   onFileInput(event: Event) {
@@ -54,26 +67,35 @@ export class FeedUploadComponent {
     this.previewUrl.set(null);
     this.error.set(null);
     this.storedName.set(null);
+    this.record.set(null);
+    this.detectionError.set(null);
   }
 
   async upload() {
     const file = this.file();
-    if (!file || this.uploading()) return;
+    const nodeId = this.nodeId();
+    if (!file || !nodeId || this.uploading()) return;
 
     this.uploading.set(true);
     this.error.set(null);
     this.storedName.set(null);
+    this.record.set(null);
+    this.detectionError.set(null);
 
     try {
       const data = await this.toBase64(file);
       const res = await this.http
-        .post<UploadResponse>('/api/feed-upload', {
+        .post<FeedUploadResponse>('/api/feed-upload', {
           fileName: file.name,
           mimeType: file.type,
+          nodeId,
           data,
         })
         .toPromise();
       this.storedName.set(res?.storedName ?? null);
+      this.record.set(res?.record ?? null);
+      this.detectionError.set(res?.detectionError ?? null);
+      this.processed.emit();
     } catch {
       this.error.set('Upload failed. Please try again.');
     } finally {
