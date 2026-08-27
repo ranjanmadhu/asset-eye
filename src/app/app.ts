@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@a
 import { FormsModule } from '@angular/forms';
 import { PathfindingService } from './pathfinding.service';
 import { MapComponent } from './map/map.component';
+import { FeedUploadComponent } from './feed-upload/feed-upload.component';
 import { GraphNode, RouteOption } from './models';
 import { RESOURCES } from './mock-graph.data';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,13 +10,13 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
-  imports: [FormsModule, MapComponent, MatIconModule],
+  imports: [FormsModule, MapComponent, MatIconModule, FeedUploadComponent],
   templateUrl: './app.html',
 })
 export class App {
   private pathfinding = inject(PathfindingService);
   
-  viewMode = signal<'map' | 'database'>('map');
+  viewMode = signal<'map' | 'database' | 'upload'>('map');
 
   nodes = this.pathfinding.getNodes();
   edges = this.pathfinding.getEdges();

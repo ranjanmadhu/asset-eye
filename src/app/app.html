@@ -22,6 +22,13 @@
         [class.text-white]="viewMode() === 'database'"
         [class.text-slate-300]="viewMode() !== 'database'"
       >DATABASE</button>
+      <button 
+        (click)="viewMode.set('upload')"
+        class="px-4 py-1.5 rounded-md text-xs font-bold transition-colors cursor-pointer"
+        [class.bg-blue-600]="viewMode() === 'upload'"
+        [class.text-white]="viewMode() === 'upload'"
+        [class.text-slate-300]="viewMode() !== 'upload'"
+      >FEED UPLOAD</button>
     </div>
 
     <div class="flex items-center gap-4 text-xs font-medium uppercase tracking-wider hidden sm:flex">
@@ -166,6 +173,10 @@
           [activePath]="activePath()"
         ></app-map>
       </section>
+    </main>
+  } @else if (viewMode() === 'upload') {
+    <main class="flex-1 overflow-y-auto p-6 md:p-10 bg-slate-100">
+      <app-feed-upload />
     </main>
   } @else {
     <main class="flex-1 overflow-y-auto p-6 md:p-10 bg-slate-100">
