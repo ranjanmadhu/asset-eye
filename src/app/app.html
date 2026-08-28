@@ -182,7 +182,7 @@
     </main>
   } @else if (viewMode() === 'upload') {
     <main class="flex-1 overflow-y-auto p-6 md:p-10 bg-slate-100">
-      <app-feed-upload />
+      <app-feed-upload (processed)="refreshData()" />
     </main>
   } @else {
     <main class="flex-1 overflow-y-auto p-6 md:p-10 bg-slate-100">

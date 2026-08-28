@@ -5,10 +5,14 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express from 'express';
-import {mkdir, writeFile} from 'node:fs/promises';
+import {mkdir, readFile, writeFile} from 'node:fs/promises';
 import {join, resolve} from 'node:path';
 
 import fs from 'node:fs';
+
+import {NODES} from './app/mock-graph.data';
+import {processUpload} from './server-lib/pipeline';
+import {YoloOnnxDetectionEngine} from './server-lib/yolo-engine';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 const dataFolder = join(process.cwd(), 'src/data');
@@ -17,6 +21,14 @@ const dataFolder = join(process.cwd(), 'src/data');
 const imagesFolder = resolve(
   process.env['DATA_IMAGES_DIR'] ?? join(process.cwd(), 'src', 'data-images'),
 );
+
+/** Annotated images plus their per-image detection metadata sidecars. */
+const taggedFolder = resolve(
+  process.env['DATA_TAGGED_DIR'] ?? join(process.cwd(), 'src', 'data-tagged'),
+);
+
+const detectionEngine = new YoloOnnxDetectionEngine();
+const VALID_NODE_IDS = new Set(NODES.map((n) => n.id));
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES: Record<string, string> = {
@@ -31,6 +43,7 @@ const angularApp = new AngularNodeAppEngine();
 
 app.use('/api', express.json({limit: '15mb'}));
 app.use('/data-images', express.static(imagesFolder));
+app.use('/data-tagged', express.static(taggedFolder));
 
 app.get('/api/resources', (req, res) => {
   try {
@@ -44,7 +57,7 @@ app.get('/api/resources', (req, res) => {
 });
 
 app.post('/api/feed-upload', async (req, res) => {
-  const {fileName, mimeType, data} = req.body ?? {};
+  const {fileName, mimeType, data, nodeId} = req.body ?? {};
 
   if (typeof mimeType !== 'string' || !ALLOWED_IMAGE_TYPES[mimeType]) {
     res.status(400).json({error: 'Unsupported image type.'});
@@ -52,6 +65,12 @@ app.post('/api/feed-upload', async (req, res) => {
   }
   if (typeof data !== 'string' || !data) {
     res.status(400).json({error: 'Missing image payload.'});
+    return;
+  }
+  if (typeof nodeId !== 'string' || !VALID_NODE_IDS.has(nodeId)) {
+    res.status(400).json({
+      error: {code: 'INVALID_LOCATION', message: 'The provided location could not be found.'},
+    });
     return;
   }
 
@@ -69,9 +88,40 @@ app.post('/api/feed-upload', async (req, res) => {
   try {
     await mkdir(imagesFolder, {recursive: true});
     await writeFile(join(imagesFolder, storedName), buffer);
-    res.status(201).json({storedName, size: buffer.length});
   } catch {
     res.status(500).json({error: 'Failed to store the image.'});
+    return;
+  }
+
+  try {
+    const record = await processUpload(buffer, storedName, nodeId, {
+      engine: detectionEngine,
+      dataFolder,
+      taggedFolder,
+    });
+    res.status(201).json({storedName, size: buffer.length, nodeId, record});
+  } catch (err) {
+    // The upload itself succeeded, so degrade gracefully if inference is unavailable.
+    console.error('Detection pipeline failed', err);
+    res.status(201).json({
+      storedName,
+      size: buffer.length,
+      nodeId,
+      detectionError: 'Object detection is unavailable for this image.',
+    });
+  }
+});
+
+app.get('/api/detections/:id', async (req, res) => {
+  const id = req.params.id;
+  if (!/^[a-zA-Z0-9-_]+$/.test(id)) {
+    res.status(400).json({error: 'Invalid detection id.'});
+    return;
+  }
+  try {
+    res.json(JSON.parse(await readFile(join(taggedFolder, `${id}.json`), 'utf8')));
+  } catch {
+    res.status(404).json({error: 'Detection metadata not found.'});
   }
 });
 
