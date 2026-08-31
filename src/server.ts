@@ -8,18 +8,29 @@ import express from 'express';
 import {mkdir, readFile, writeFile} from 'node:fs/promises';
 import {join, resolve} from 'node:path';
 
-import fs from 'node:fs';
+import fs, { existsSync } from 'node:fs';
 
 import {NODES} from './app/mock-graph.data';
 import {processUpload} from './server-lib/pipeline';
 import {YoloOnnxDetectionEngine} from './server-lib/yolo-engine';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
-const dataFolder = join(process.cwd(), 'src/data');
+
+// Find the project root by looking for the src directory
+function findProjectRoot(currentDir: string): string {
+  let dir = currentDir;
+  while (!existsSync(join(dir, 'src')) && dir !== '/' && dir.length > 3) {
+    dir = join(dir, '..');
+  }
+  return existsSync(join(dir, 'src')) ? dir : process.cwd();
+}
+
+const rootDir = findProjectRoot(process.cwd());
+const dataFolder = join(rootDir, 'src/data');
 
 /** Source folder that holds the tracked asset imagery. */
 const imagesFolder = resolve(
-  process.env['DATA_IMAGES_DIR'] ?? join(process.cwd(), 'src', 'data-images'),
+  process.env['DATA_IMAGES_DIR'] ?? join(rootDir, 'src', 'data-images'),
 );
 
 /** Annotated images plus their per-image detection metadata sidecars. */
