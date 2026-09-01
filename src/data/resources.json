@@ -94,5 +94,45 @@
         "confidence": 72
       }
     ]
+  },
+  {
+    "id": "1788238099936_room-with-stretcher",
+    "nodeId": "n4",
+    "timestamp": "2026-09-01T04:48:26.564Z",
+    "imageUrl": "/data-tagged/1788238099936_room-with-stretcher_tagged.jpg",
+    "detectedItems": [
+      {
+        "type": "Person",
+        "confidence": 78.9
+      },
+      {
+        "type": "Person",
+        "confidence": 74.8
+      },
+      {
+        "type": "Person",
+        "confidence": 67.7
+      },
+      {
+        "type": "Stretcher",
+        "confidence": 49.4
+      },
+      {
+        "type": "Stretcher",
+        "confidence": 44.2
+      },
+      {
+        "type": "Wheelchair",
+        "confidence": 39.1
+      },
+      {
+        "type": "Person",
+        "confidence": 35.8
+      },
+      {
+        "type": "Wheelchair",
+        "confidence": 35.4
+      }
+    ]
   }
 ]

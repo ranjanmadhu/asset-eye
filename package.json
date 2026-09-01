@@ -3,13 +3,17 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "ensure:model": "node scripts/ensure-model.mjs",
     "start": "ng serve",
-    "dev": "cross-env ng serve --port=3000 --host=0.0.0.0 --allowed-hosts=true ${DISABLE_HMR:+--live-reload=false}",
+    "prestart": "npm run ensure:model",
+    "dev": "cross-env ng serve --port=3001 --host=0.0.0.0 --allowed-hosts=true ${DISABLE_HMR:+--live-reload=false}",
+    "predev": "npm run ensure:model",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "serve:ssr:app": "node dist/app/server/server.mjs"
+    "serve:ssr:app": "node dist/app/server/server.mjs",
+    "preserve:ssr:app": "npm run ensure:model"
   },
   "private": true,
   "dependencies": {
