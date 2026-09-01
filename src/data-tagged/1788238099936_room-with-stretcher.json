@@ -1,0 +1,103 @@
+{
+  "id": "1788238099936_room-with-stretcher",
+  "sourceImage": "1788238099936_room-with-stretcher.png",
+  "sourceImageUrl": "/data-images/1788238099936_room-with-stretcher.png",
+  "taggedImage": "1788238099936_room-with-stretcher_tagged.jpg",
+  "taggedImageUrl": "/data-tagged/1788238099936_room-with-stretcher_tagged.jpg",
+  "nodeId": "n4",
+  "capturedAt": "2026-09-01T04:48:26.564Z",
+  "processedAt": "2026-09-01T04:48:26.564Z",
+  "modelVersion": "yolov8n",
+  "imageWidth": 1672,
+  "imageHeight": 941,
+  "detections": [
+    {
+      "rawLabel": "person",
+      "type": "Person",
+      "confidence": 78.9,
+      "box": {
+        "x": 1221,
+        "y": 207,
+        "width": 89,
+        "height": 255
+      }
+    },
+    {
+      "rawLabel": "person",
+      "type": "Person",
+      "confidence": 74.8,
+      "box": {
+        "x": 281,
+        "y": 176,
+        "width": 103,
+        "height": 195
+      }
+    },
+    {
+      "rawLabel": "person",
+      "type": "Person",
+      "confidence": 67.7,
+      "box": {
+        "x": 806,
+        "y": 89,
+        "width": 58,
+        "height": 192
+      }
+    },
+    {
+      "rawLabel": "bed",
+      "type": "Stretcher",
+      "confidence": 49.4,
+      "box": {
+        "x": 114,
+        "y": 244,
+        "width": 363,
+        "height": 369
+      }
+    },
+    {
+      "rawLabel": "bed",
+      "type": "Stretcher",
+      "confidence": 44.2,
+      "box": {
+        "x": 469,
+        "y": 183,
+        "width": 318,
+        "height": 152
+      }
+    },
+    {
+      "rawLabel": "chair",
+      "type": "Wheelchair",
+      "confidence": 39.1,
+      "box": {
+        "x": 968,
+        "y": 132,
+        "width": 70,
+        "height": 81
+      }
+    },
+    {
+      "rawLabel": "person",
+      "type": "Person",
+      "confidence": 35.8,
+      "box": {
+        "x": 1165,
+        "y": 197,
+        "width": 89,
+        "height": 92
+      }
+    },
+    {
+      "rawLabel": "chair",
+      "type": "Wheelchair",
+      "confidence": 35.4,
+      "box": {
+        "x": 145,
+        "y": 610,
+        "width": 249,
+        "height": 225
+      }
+    }
+  ]
+}

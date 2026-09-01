@@ -6,6 +6,7 @@
 
 # Compiled output
 /dist
+/models/
 /tmp
 /out-tsc
 /bazel-out
