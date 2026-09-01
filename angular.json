@@ -60,7 +60,8 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "externalDependencies": ["@google/genai", "onnxruntime-node", "sharp"]
             }
           },
           "defaultConfiguration": "production"

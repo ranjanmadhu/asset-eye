@@ -4,9 +4,9 @@
   "scripts": {
     "ng": "ng",
     "ensure:model": "node scripts/ensure-model.mjs",
-    "start": "ng serve",
+    "start": "node dist/app/server/server.mjs",
     "prestart": "npm run ensure:model",
-    "dev": "cross-env ng serve --port=3001 --host=0.0.0.0 --allowed-hosts=true ${DISABLE_HMR:+--live-reload=false}",
+    "dev": "cross-env ng serve --port=3000 --host=0.0.0.0 --allowed-hosts=true ${DISABLE_HMR:+--live-reload=false}",
     "predev": "npm run ensure:model",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",

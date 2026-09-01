@@ -46,7 +46,7 @@
       <aside class="w-full md:w-[320px] bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto md:overflow-y-hidden">
         <!-- Navigation Card -->
         <div class="p-5 border-b border-slate-100">
-          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Routing Parameters</label>
+          <div class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Routing Parameters</div>
           
           <div class="space-y-4">
             <!-- Start Location -->
@@ -97,11 +97,12 @@
         <!-- Resource Options -->
         @if (routeOptions().length > 0) {
           <div class="p-5 border-b border-slate-100 bg-slate-50/50">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Available Options</label>
+            <div class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Available Options</div>
             <div class="space-y-3">
               @for (opt of routeOptions(); track opt.resource.id; let i = $index) {
-                <div 
-                  class="p-3 rounded border transition-all cursor-pointer shadow-sm relative overflow-hidden"
+                <button 
+                  type="button"
+                  class="block w-full text-left p-3 rounded border transition-all cursor-pointer shadow-sm relative overflow-hidden"
                   [class.bg-white]="i !== selectedOptionIdx()"
                   [class.border-slate-200]="i !== selectedOptionIdx()"
                   [class.bg-blue-50]="i === selectedOptionIdx()"
@@ -126,7 +127,7 @@
                     <span>{{ opt.matchedItem.type }}</span>
                     <span class="text-emerald-600">{{ opt.matchedItem.confidence }}% Confidence</span>
                   </div>
-                </div>
+                </button>
               }
             </div>
           </div>
@@ -135,7 +136,7 @@
         <!-- Directions Panel -->
         @if (directions().length > 0) {
           <div class="flex-1 overflow-hidden flex flex-col p-5 bg-slate-50">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Turn-by-Turn Directions</label>
+            <div class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Turn-by-Turn Directions</div>
             
             <div class="space-y-3 overflow-y-auto pr-1 pb-4">
               @for (step of directions(); track $index; let last = $last) {

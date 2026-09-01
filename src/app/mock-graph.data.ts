@@ -1,4 +1,4 @@
-import { FloorArea, GraphEdge, GraphNode, ResourceData } from './models';
+import { FloorArea, GraphEdge, GraphNode } from './models';
 
 export const NODES: GraphNode[] = [
   // Floor 1

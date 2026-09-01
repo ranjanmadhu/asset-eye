@@ -1,0 +1,23 @@
+
+> ai-studio-angular-app@0.0.0 predev
+> npm run ensure:model
+
+
+> ai-studio-angular-app@0.0.0 ensure:model
+> node scripts/ensure-model.mjs
+
+YOLO model is ready: /app/applet/models/yolov8n.onnx
+
+> ai-studio-angular-app@0.0.0 dev
+> cross-env ng serve --port=3000 --host=0.0.0.0 --allowed-hosts=true ${DISABLE_HMR:+--live-reload=false}
+
+
+Warning: This is a simple server for use in testing or debugging Angular applications
+locally. It hasn't been reviewed for security issues.
+
+Binding this server to an open connection can result in compromising your application or
+computer. Using a different host than the one passed to the "--host" flag might result in
+websocket connection issues.
+    
+An unhandled exception occurred: Port 3000 is already in use. Use '--port' to specify a different port.
+See "/tmp/ng-YpiLuF/angular-errors.log" for further details.

@@ -132,7 +132,6 @@ export class PathfindingService {
     if (pathIds.length < 2) return ["You are already at the destination."];
 
     const instructions: string[] = [];
-    let currentSegmentDistance = 0;
     
     for (let i = 0; i < pathIds.length - 1; i++) {
       const fromId = pathIds[i];
